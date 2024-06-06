@@ -59,13 +59,15 @@ The tool logs the following information:
   - Total number of requests.
 
 # Future Enhancements
-- Implement more sophisticated error handling and retry mechanisms.
 - Allow user to define maximum concurrent threads for load testing.
-- Explore using a thread pool for worker thread management
 - Generate a detailed report (in formats such as CSV or JSON) that can be analyzed later.
 - Using a configuration file (YAML/JSON) for load test parameters
 - Allow specifying headers and payload as JSON data
-- Implement more specific error handling for different exception types
-- Implement different logging levels and potentially separate log files
 
+
+# TODOs
+- Add More Unit test cases to cover all corner cases
+- Explore using a thread pool for worker thread management 
+- Implement different logging levels and potentially separate log files
+- Implement more sophisticated error handling and retry mechanisms.
  
