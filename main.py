@@ -1,6 +1,7 @@
 import argparse
 import logging
 import sys
+import time
 from src.load_tester.tester import LoadTester
 
 def main():
@@ -33,6 +34,9 @@ def main():
     if args.headers:
         headers = dict(h.split(":") for h in args.headers.split(","))
 
+    # Record start time
+    start_time = time.time()
+
     # Log test parameters
     logger.info("Starting load test for URL: %s", args.url)
     logger.info("QPS: %d", args.qps)
@@ -45,7 +49,8 @@ def main():
     total_requests = tester.run_test(args.duration)
 
     # Calculate total time and actual request count per duration
-    total_time = args.duration
+    end_time = time.time()
+    total_time = end_time - start_time
     actual_qps = total_requests / args.duration
 
     # Log load test completion
