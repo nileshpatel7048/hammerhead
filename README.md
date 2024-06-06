@@ -18,14 +18,14 @@ This is a command-line tool for performing HTTP load testing, designed to evalua
 First, build the Docker image:
 
 ```sh
-docker build -t http-load-tester .
+docker build -t hammerhead .
 ```
 ## Usage
 
 To run the load testing tool, use the following command:
 
 ```sh
-docker run -it --rm http-load-tester <url> [options]
+docker run -it --rm hammerhead <url> [options]
 ```
 ## Command-Line Arguments
 - url (required): The URL to test.
@@ -39,11 +39,11 @@ docker run -it --rm http-load-tester <url> [options]
 ## Example Commands
 ### Basic GET Request
 ```sh
-docker run -it --rm http-load-tester http://www.example.com --duration=10 --qps=2
+docker run -it --rm hammerhead http://www.example.com --duration=10 --qps=2
 ```
 ### POST Request with Headers and Payload
 ```sh
-docker run -it --rm http-load-tester http://www.example.com --duration=10 --qps=2 --method=POST --headers="Content-Type:application/json,Authorization:Bearer mytoken" --payload='{"key1":"value1","key2":"value2"}'
+docker run -it --rm hammerhead http://www.example.com --duration=10 --qps=2 --method=POST --headers="Content-Type:application/json,Authorization:Bearer mytoken" --payload='{"key1":"value1","key2":"value2"}'
 ```
 
 ## Output
