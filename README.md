@@ -4,7 +4,7 @@ This is a command-line tool for performing HTTP load testing, designed to evalua
 
 ## Features
 
-- Supports GET and POST requests.
+- Supports all HTTP Methods(GET, POST, PUT , PATCH and DELETE) requests.
 - Allows specifying custom headers and payloads.
 - Calculates various performance metrics such as average latency, standard deviation, and error rate.
 - Configurable request timeout.
