@@ -85,5 +85,13 @@ class LoadTester:
         logging.info("Total Requests: %d", total_requests)
 
     def calculate_percentile(self, percentile):
+        if not self.latencies:
+            return None  # Return None if latencies list is empty
+
         size = len(self.latencies)
-        return sorted(self.latencies)[int(size * percentile / 100) - 1]
+        if percentile < 0 or percentile > 100:
+            return None  # Return None if percentile is out of range
+
+        index = int(size * percentile / 100) - 1
+        index = max(0, min(index, size - 1))  # Ensure index is within bounds
+        return sorted(self.latencies)[index]

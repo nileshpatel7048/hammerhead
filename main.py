@@ -20,6 +20,14 @@ def main():
 
     args = parser.parse_args()
 
+    # Validate duration and qps values
+    if args.duration <= 0:
+        logger.error("Error: Duration should be greater than zero.")
+        sys.exit(1)
+    if args.qps <= 0:
+        logger.error("Error: QPS should be greater than zero.")
+        sys.exit(1)
+
     # Parse headers if provided
     headers = {}
     if args.headers:
