@@ -34,7 +34,7 @@ docker run -it --rm hammerhead <url> [options]
 - --method (optional): HTTP method (GET or POST). Default is GET.
 - --headers (optional): HTTP headers in the format "Header1:Value1,Header2:Value2".
 - --payload (optional): HTTP payload as a string.
-- --max_timeout (optional): Maximum timeout for any HTTP request in milliseconds. Default is 1000.
+- --max_timeout (optional): Maximum timeout for any HTTP request in milliseconds. Default is 10,000.
 
 ## Example Commands
 ### Basic GET Request

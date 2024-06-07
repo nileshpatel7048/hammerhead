@@ -22,32 +22,32 @@ class TestLoadTester(unittest.TestCase):
 
     @patch('src.load_tester.tester.LoadTester.send_request')
     @patch('time.sleep', return_value=None)  # Mock time.sleep to avoid delays
-    def test_run_test_with_zero_duration(self, mock_sleep, mock_send_request):
+    async def test_run_test_with_zero_duration(self, mock_sleep, mock_send_request):
         tester = LoadTester("http://example.com", 1, 1000)
-        total_requests = tester.run_test(0)
+        total_requests = await tester.run_test(0)
         self.assertEqual(total_requests, 0)  # No requests should be made with zero duration
 
     @patch('src.load_tester.tester.LoadTester.send_request')
     @patch('time.sleep', return_value=None)  # Mock time.sleep to avoid delays
-    def test_run_test_with_zero_qps(self, mock_sleep, mock_send_request):
+    async def test_run_test_with_zero_qps(self, mock_sleep, mock_send_request):
         tester = LoadTester("http://example.com", 0, 1000)
-        total_requests = tester.run_test(1)
+        total_requests = await tester.run_test(1)
         self.assertEqual(total_requests, 0)  # No requests should be made with zero QPS
 
     @patch('src.load_tester.tester.LoadTester.send_request')
     @patch('time.sleep', return_value=None)  # Mock time.sleep to avoid delays
-    def test_run_test_with_no_latencies(self, mock_sleep, mock_send_request):
+    async def test_run_test_with_no_latencies(self, mock_sleep, mock_send_request):
         tester = LoadTester("http://example.com", 1, 1000)
-        total_requests = tester.run_test(1)
+        total_requests = await tester.run_test(1)
         self.assertEqual(total_requests, 0)  # No latencies recorded, so total requests should be 0
 
     @patch('src.load_tester.tester.LoadTester.send_request')
     @patch('time.sleep', return_value=None)  # Mock time.sleep to avoid delays
-    def test_run_test_with_errors(self, mock_sleep, mock_send_request):
+    async def test_run_test_with_errors(self, mock_sleep, mock_send_request):
         tester = LoadTester("http://example.com", 1, 1000)
         tester.errors = 5  # Simulate errors during the test
         tester.latencies = [0.1, 0.2, 0.3]
-        total_requests = tester.run_test(1)
+        total_requests = await tester.run_test(1)
         self.assertEqual(total_requests, 8)  # Total requests should include errors
 
     def test_calculate_percentile_with_empty_latencies(self):

@@ -9,6 +9,7 @@ COPY . .
 
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir requests
+RUN pip install --no-cache-dir aiohttp
 
 # Run main.py when the container launches
 ENTRYPOINT ["python", "main.py"]

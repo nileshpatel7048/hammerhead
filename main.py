@@ -2,6 +2,7 @@ import argparse
 import logging
 import sys
 import time
+import asyncio
 from src.load_tester.tester import LoadTester
 
 def main():
@@ -17,7 +18,7 @@ def main():
     parser.add_argument("--method", type=str, default="GET", help="HTTP method")
     parser.add_argument("--headers", type=str, help="HTTP headers")
     parser.add_argument("--payload", type=str, help="HTTP payload")
-    parser.add_argument("--max_timeout", type=int, default=1000, help="Maximum timeout for any HTTP request (in milliseconds)")
+    parser.add_argument("--max_timeout", type=int, default=10000, help="Maximum timeout for any HTTP request (in milliseconds)")
 
     args = parser.parse_args()
 
@@ -46,7 +47,8 @@ def main():
     tester = LoadTester(args.url, args.qps, args.max_timeout, args.method, headers, args.payload)
 
     # Start load test
-    total_requests = tester.run_test(args.duration)
+    loop = asyncio.get_event_loop()
+    total_requests = loop.run_until_complete(tester.run_test(args.duration))
 
     # Calculate total time and actual request count per duration
     end_time = time.time()
@@ -55,7 +57,7 @@ def main():
 
     # Log load test completion
     logger.info("Load test completed in %d seconds", total_time)
-    logger.info("Actual request count per duration: %f", actual_qps)
+    logger.info("Actual qps: %f", actual_qps)
 
 if __name__ == "__main__":
     main()

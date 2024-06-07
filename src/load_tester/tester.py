@@ -1,7 +1,8 @@
+import asyncio
 import logging
-import requests
 import time
-import threading
+
+from aiohttp import ClientSession, ClientTimeout
 from statistics import mean, stdev
 
 class LoadTester:
@@ -13,44 +14,40 @@ class LoadTester:
         self.payload = payload
         self.latencies = []
         self.errors = 0
-        self.lock = threading.Lock()  # Lock for thread safety
-        self.stop_test = False
         self.max_timeout = max_timeout / 1000  # Convert milliseconds to seconds
         logging.info("Initialized LoadTester with URL: %s, QPS: %d, Method: %s", self.url, self.qps, self.method)
 
-    def send_request(self):
-        while not self.stop_test:
-            start_time = time.time()
-            try:
-                response = requests.request(self.method, self.url, headers=self.headers, data=self.payload, timeout=self.max_timeout)
-                response.raise_for_status()
+    async def send_request(self, session):
+        start_time = time.time()
+        try:
+            async with session.request(self.method, self.url, headers=self.headers, data=self.payload, timeout=ClientTimeout(total=self.max_timeout)) as response:
                 latency = time.time() - start_time
-                with self.lock:
-                    self.latencies.append(latency)
+                self.latencies.append(latency)
                 logging.info("Request successful, latency: %f seconds", latency)
-            except requests.RequestException as e:
-                with self.lock:
-                    self.errors += 1
-                logging.error("Request failed: %s", e)
+        except Exception as e:
+            self.errors += 1
+            logging.error("Request failed: %s", e)
 
-            # Adjust sleep duration dynamically to achieve desired QPS
-            time_taken = time.time() - start_time
-            sleep_time = max(0, 1 - time_taken)
-            time.sleep(sleep_time)
+    async def run_test(self, duration):
+        async with ClientSession() as session:
+            start_time = time.time()
+            end_time = start_time + duration
+            tasks = []
 
-    def run_test(self, duration):
-        threads = []
-        for _ in range(self.qps):
-            thread = threading.Thread(target=self.send_request)
-            thread.start()
-            threads.append(thread)
+            def schedule_request():
+                if time.time() < end_time:
+                    tasks.append(asyncio.create_task(self.send_request(session)))
+                    asyncio.get_event_loop().call_later(1, schedule_request)
 
-        logging.info("Starting load test for %d seconds", duration)
-        time.sleep(duration)
-        self.stop_test = True
+            # Start the first batch of requests
+            for _ in range(self.qps):
+                schedule_request()
 
-        for thread in threads:
-            thread.join()
+            # Wait for the duration of the test
+            await asyncio.sleep(duration)
+
+            # Wait for all tasks to complete
+            await asyncio.gather(*tasks, return_exceptions=True)
 
         self.report_results()
         return self.calculate_total_requests()
